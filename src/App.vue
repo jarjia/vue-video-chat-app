@@ -169,6 +169,11 @@ watch(channel, () => {
 
   <input class="border-2 border-black" v-model="callInput" />
   <br />
-  <button id="answerButton" @click="answerCall">Answer</button>
-  <button @click="dumbFUnc">click</button>
+  <button
+    id="answerButton"
+    @click="answerCall"
+    class="p-4 text-white mt-2 active:bg-green-700 bg-green-500"
+  >
+    Answer
+  </button>
 </template>
