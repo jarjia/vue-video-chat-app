@@ -1,31 +1,16 @@
 <script setup lang="ts">
-import { ref } from "vue";
+// @ts-nocheck
+import { onMounted, ref, watch } from "vue";
 import {
-  getFirestore,
-  collection,
-  setDoc,
-  addDoc,
-  getDoc,
-  updateDoc,
-  doc,
-  onSnapshot,
-} from "firebase/firestore";
-import * as firebase from "firebase/app";
+  postCreateVideoSession,
+  postCreateOffer,
+  postCreateAnswerSession,
+  postCreateAnswer,
+  getVideoSession,
+} from "./services/videoServices";
+import useInstantiatePusher from "./helpers/useInstantiatePusher";
 
-const firebaseConfig = {
-  apiKey: "AIzaSyDYUK4BEFg27JakJjEKL-HmYrXf6b5y_mM",
-  authDomain: "video-chat-b9f3e.firebaseapp.com",
-  databaseURL:
-    "https://video-chat-b9f3e-default-rtdb.europe-west1.firebasedatabase.app",
-  projectId: "video-chat-b9f3e",
-  storageBucket: "video-chat-b9f3e.appspot.com",
-  messagingSenderId: "1098321586481",
-  appId: "1:1098321586481:web:832919f677dc02aab46810",
-  measurementId: "G-Q8DG20R4MJ",
-};
-
-const app = firebase.initializeApp(firebaseConfig);
-const firestore = getFirestore(app);
+useInstantiatePusher();
 
 const servers = {
   iceServers: [
@@ -38,6 +23,7 @@ const servers = {
 
 const pc = new RTCPeerConnection(servers);
 
+const channel = ref(null);
 const localStream = ref(null);
 const remoteStream = ref(null);
 const myVideo = ref(null);
@@ -51,12 +37,10 @@ const startWebCam = async () => {
   });
   remoteStream.value = new MediaStream();
 
-  // Push tracks from local stream to peer connection
   localStream.value.getTracks().forEach((track) => {
     pc.addTrack(track, localStream.value);
   });
 
-  // Pull tracks from remote stream, add to video stream
   pc.ontrack = (event) => {
     event.streams[0].getTracks().forEach((track) => {
       remoteStream.value.addTrack(track);
@@ -68,21 +52,20 @@ const startWebCam = async () => {
 };
 
 const createOffer = async () => {
-  const callDoc = collection(
-    firestore,
-    `${Math.floor(Math.random() * (999999999999 - 1000000 + 1)) + 1000000}`
-  );
-  const offerCandidates = collection(firestore, "offerCandidates");
-  const answerCandidates = collection(firestore, "answerCandidates");
+  const random =
+    Math.floor(Math.random() * (999999999999 - 1000000 + 1)) + 1000000;
 
-  callInput.value = callDoc.id;
+  callInput.value = random;
 
-  // Get candidates for caller, save to db
-  pc.onicecandidate = (event) => {
-    event.candidate && addDoc(offerCandidates, event.candidate.toJSON());
+  let candidates: {}[] = [];
+
+  pc.onicecandidate = async (event) => {
+    event.candidate && candidates.push(event.candidate.toJSON());
+    if (event.candidate === null) {
+      await postCreateVideoSession(random, candidates);
+    }
   };
 
-  // Create offer
   const offerDescription = await pc.createOffer();
   await pc.setLocalDescription(offerDescription);
 
@@ -90,46 +73,26 @@ const createOffer = async () => {
     sdp: offerDescription.sdp,
     type: offerDescription.type,
   };
-
-  const callDocRef = doc(callDoc, callDoc.id);
-
-  await setDoc(callDocRef, { offer });
-
-  // Listen for remote answer
-  onSnapshot(callDocRef, (snapshot) => {
-    const data = snapshot.data();
-    if (!pc.currentRemoteDescription && data?.answer) {
-      const answerDescription = new RTCSessionDescription(data.answer);
-      pc.setRemoteDescription(answerDescription);
-    }
-  });
-
-  // When answered, add candidate to peer connection
-  onSnapshot(answerCandidates, (snapshot) => {
-    snapshot.docChanges().forEach((change) => {
-      if (change.type === "added") {
-        const candidate = new RTCIceCandidate(change.doc.data());
-        pc.addIceCandidate(candidate);
-      }
-    });
-  });
+  await postCreateOffer(random, offer);
 };
 
 const answerCall = async () => {
   const callId = callInput.value;
-  const callDoc = collection(firestore, callId);
-  const offerCandidates = collection(firestore, "offerCandidates");
-  const answerCandidates = collection(firestore, "answerCandidates");
+  const { data } = await getVideoSession(callId);
+  let candidates: {}[] = [];
 
-  pc.onicecandidate = (event) => {
-    event.candidate && addDoc(answerCandidates, event.candidate.toJSON());
+  pc.onicecandidate = async (event) => {
+    event.candidate && candidates.push(event.candidate.toJSON());
+    if (event.candidate === null) {
+      await postCreateAnswerSession(callId, candidates);
+    }
   };
 
-  const callDocRef = doc(callDoc, callId);
+  const offerDescription = {
+    ...data,
+    sdp: data.sdp + "\n",
+  };
 
-  const callData = (await getDoc(callDocRef)).data();
-
-  const offerDescription = callData.offer;
   await pc.setRemoteDescription(new RTCSessionDescription(offerDescription));
 
   const answerDescription = await pc.createAnswer();
@@ -140,18 +103,39 @@ const answerCall = async () => {
     sdp: answerDescription.sdp,
   };
 
-  await updateDoc(callDocRef, { answer });
-
-  onSnapshot(offerCandidates, (snapshot) => {
-    snapshot.docChanges().forEach((change) => {
-      console.log(change);
-      if (change.type === "added") {
-        let data = change.doc.data();
-        pc.addIceCandidate(new RTCIceCandidate(data));
-      }
-    });
-  });
+  await postCreateAnswer(callId, answer);
 };
+
+onMounted(() => {
+  if (window.Echo) {
+    channel.value = window.Echo.channel("video-chat");
+  }
+});
+
+watch(channel, () => {
+  channel.value.listen("VideoChatEvent", (data) => {
+    const { message } = data;
+    if (message?.answerCandidates) {
+      message.answerCandidates.forEach((item) => {
+        const candidate = new RTCIceCandidate(item);
+        pc.addIceCandidate(candidate);
+      });
+    }
+    if (message?.offerCandidates) {
+      message.offerCandidates.forEach((item) => {
+        pc.addIceCandidate(new RTCIceCandidate(item));
+      });
+    }
+    if (!pc.currentRemoteDescription && message?.answer) {
+      let ans = {
+        ...message.answer,
+        sdp: message.answer.sdp + "\n",
+      };
+      const answerDescription = new RTCSessionDescription(ans);
+      pc.setRemoteDescription(answerDescription);
+    }
+  });
+});
 </script>
 
 <template>
@@ -186,4 +170,5 @@ const answerCall = async () => {
   <input class="border-2 border-black" v-model="callInput" />
   <br />
   <button id="answerButton" @click="answerCall">Answer</button>
+  <button @click="dumbFUnc">click</button>
 </template>

@@ -12,9 +12,9 @@ function useInstantiatePusher() {
   window.Pusher = Pusher;
 
   window.Echo = new Echo({
-    authEndpoint: `http://localhost:8000/broadcasting/auth`,
+    authEndpoint: `${import.meta.env.VITE_API_URL}broadcasting/auth`,
     broadcaster: "pusher",
-    key: "02224b564dec8bfa9d8c",
+    key: import.meta.env.VITE_PUSHER_KEY,
     forceTLS: true,
     cluster: ["eu"],
   });
