@@ -23,6 +23,25 @@ let pc = null;
       }`
     );
     pc = new RTCPeerConnection(data);
+
+    localStream.value = await navigator.mediaDevices.getUserMedia({
+      video: true,
+      audio: true,
+    });
+    remoteStream.value = new MediaStream();
+
+    localStream.value.getTracks().forEach((track) => {
+      pc.addTrack(track, localStream.value);
+    });
+
+    pc.ontrack = (event) => {
+      event.streams[0].getTracks().forEach((track) => {
+        remoteStream.value.addTrack(track);
+      });
+    };
+
+    myVideo.value.srcObject = localStream.value;
+    remoteVideos.value.srcObject = remoteStream.value;
   } catch (error) {
     console.log(error);
   }
@@ -35,26 +54,7 @@ const myVideo = ref(null);
 const remoteVideos = ref(null);
 const callInput = ref("");
 
-const startWebCam = async () => {
-  localStream.value = await navigator.mediaDevices.getUserMedia({
-    video: true,
-    audio: true,
-  });
-  remoteStream.value = new MediaStream();
-
-  localStream.value.getTracks().forEach((track) => {
-    pc.addTrack(track, localStream.value);
-  });
-
-  pc.ontrack = (event) => {
-    event.streams[0].getTracks().forEach((track) => {
-      remoteStream.value.addTrack(track);
-    });
-  };
-
-  myVideo.value.srcObject = localStream.value;
-  remoteVideos.value.srcObject = remoteStream.value;
-};
+// const startWebCam = async () => {};
 
 const createOffer = async () => {
   const random = Math.floor(Math.random() * (9999 - 1000 + 1)) + 1000;
@@ -165,13 +165,6 @@ watch(channel, () => {
       playsinline="true"
     ></video>
   </div>
-  <button
-    id="webcamButton"
-    @click="startWebCam"
-    class="bg-blue-400 text-white p-4 m-2"
-  >
-    კამერის ჩართვა
-  </button>
   <button
     id="callButton"
     @click="createOffer"
