@@ -94,7 +94,7 @@ const answerCall = async () => {
 
   const offerDescription = {
     ...data,
-    sdp: data.sdp,
+    sdp: data.sdp + "\n",
   };
 
   await pc.setRemoteDescription(new RTCSessionDescription(offerDescription));
@@ -139,7 +139,7 @@ watch(channel, () => {
     if (!pc.currentRemoteDescription && message?.answer) {
       let ans = {
         ...message.answer,
-        sdp: message.answer.sdp,
+        sdp: message.answer.sdp + "\n",
       };
       answer.value = message?.answer;
       const answerDescription = new RTCSessionDescription(ans);
