@@ -1,6 +1,6 @@
 <script setup lang="ts">
 // @ts-nocheck
-import { onMounted, ref, watch } from "vue";
+import { onBeforeMount, onMounted, ref, watch } from "vue";
 import {
   postCreateVideoSession,
   postCreateOffer,
@@ -9,19 +9,24 @@ import {
   getVideoSession,
 } from "./services/videoServices";
 import useInstantiatePusher from "./helpers/useInstantiatePusher";
+import useServers from "./helpers/useServers";
+import axios from "axios";
 
 useInstantiatePusher();
+let pc = null;
 
-const servers = {
-  iceServers: [
-    {
-      urls: ["stun:stun1.l.google.com:19302", "stun:stun2.l.google.com:19302"],
-    },
-  ],
-  iceCandidatePoolSize: 10,
-};
-
-const pc = new RTCPeerConnection(servers);
+(async () => {
+  try {
+    const { data } = await axios.get(
+      `${import.meta.env.VITE_TURN_SERVER_URL}?apiKey=${
+        import.meta.env.VITE_TURN_SERVER_KEY
+      }`
+    );
+    pc = new RTCPeerConnection(data);
+  } catch (error) {
+    console.log(error);
+  }
+})();
 
 const channel = ref(null);
 const localStream = ref(null);
@@ -52,8 +57,7 @@ const startWebCam = async () => {
 };
 
 const createOffer = async () => {
-  const random =
-    Math.floor(Math.random() * (999999999999 - 1000000 + 1)) + 1000000;
+  const random = Math.floor(Math.random() * (9999 - 1000 + 1)) + 1000;
 
   callInput.value = random;
 
