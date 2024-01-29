@@ -165,19 +165,29 @@ watch(channel, () => {
       playsinline="true"
     ></video>
   </div>
-  <button id="webcamButton" @click="startWebCam">Start webcam</button>
-  <h2>2. Create a new Call</h2>
-  <button id="callButton" @click="createOffer">Create Call (offer)</button>
+  <button
+    id="webcamButton"
+    @click="startWebCam"
+    class="bg-blue-400 text-white p-4 m-2"
+  >
+    კამერის ჩართვა
+  </button>
+  <button
+    id="callButton"
+    @click="createOffer"
+    class="bg-blue-400 text-white p-4 m-2"
+  >
+    ჩათის შექმნა
+  </button>
+  <br />
 
-  <h2>3. Join a Call</h2>
-
-  <input class="border-2 border-black" v-model="callInput" />
+  კოდი: <input class="border-2 border-black" v-model="callInput" />
   <br />
   <button
     id="answerButton"
     @click="answerCall"
     class="p-4 text-white mt-2 active:bg-green-700 bg-green-500"
   >
-    Answer
+    პასუხი
   </button>
 </template>
