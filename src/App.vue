@@ -22,7 +22,18 @@ let pc = null;
         import.meta.env.VITE_TURN_SERVER_KEY
       }`
     );
-    pc = new RTCPeerConnection(data);
+
+    pc = new RTCPeerConnection({
+      iceServers: [
+        "stun:stun1.l.google.com:19302",
+        "stun:stun2.l.google.com:19302",
+        {
+          urls: "turn:openrelay.metered.ca:80",
+          username: "openrelayproject",
+          credentials: "openrelayproject",
+        },
+      ],
+    });
 
     localStream.value = await navigator.mediaDevices.getUserMedia({
       video: true,
