@@ -116,6 +116,10 @@ onMounted(() => {
   }
 });
 
+const answerCandidates = ref(null);
+const offerCandidates = ref(null);
+const answer = ref(null);
+
 watch(channel, () => {
   channel.value.listen("VideoChatEvent", (data) => {
     const { message } = data;
@@ -124,17 +128,20 @@ watch(channel, () => {
         const candidate = new RTCIceCandidate(item);
         pc.addIceCandidate(candidate);
       });
+      answerCandidates.value = message.answerCandidates;
     }
     if (message?.offerCandidates) {
       message.offerCandidates.forEach((item) => {
         pc.addIceCandidate(new RTCIceCandidate(item));
       });
+      offerCandidates.value = message.offerCandidates;
     }
     if (!pc.currentRemoteDescription && message?.answer) {
       let ans = {
         ...message.answer,
         sdp: message.answer.sdp + "\n",
       };
+      answer.value = message?.answer;
       const answerDescription = new RTCSessionDescription(ans);
       pc.setRemoteDescription(answerDescription);
     }
@@ -183,4 +190,17 @@ watch(channel, () => {
   >
     პასუხი
   </button>
+  <p class="bg-black p-1 text-green-500" v-if="offerCandidates !== null">
+    offer candidates არის
+  </p>
+  <p class="bg-black p-1 text-green-500" v-if="answerCandidates !== null">
+    answer candidates არის
+  </p>
+  <p class="bg-black p-1 text-green-500" v-if="answer !== null">პასუხი არის</p>
+  <p>offer candidates</p>
+  <pre>{{ offerCandidates }}</pre>
+  <p>answer candidates</p>
+  <pre>{{ answerCandidates }}</pre>
+  <p>answer</p>
+  <pre>{{ answer }}</pre>
 </template>
