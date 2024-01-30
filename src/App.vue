@@ -44,16 +44,13 @@ let pc = null;
 
     localStream.value = await navigator.mediaDevices.getUserMedia({
       video: true,
-      audio: {
-        echoCancellation: { exact: true },
-        googEchoCancellation: { exact: true },
-        googAutoGainControl: { exact: true },
-        googNoiseSuppression: { exact: true },
-        mozEchoCancellation: { exact: true },
-        mozAutoGainControl: { exact: true },
-        mozNoiseSuppression: { exact: true },
-      },
+      audio: true,
     });
+
+    const audio = localStream.value.getAudioTracks()[0];
+
+    audio.enabled = false;
+
     remoteStream.value = new MediaStream();
 
     localStream.value.getTracks().forEach((track) => {
