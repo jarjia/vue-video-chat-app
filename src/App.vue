@@ -32,8 +32,8 @@ let pc = null;
           ],
         },
         {
-          urls: "turn:13.60.9.184:3478",
-          username: "jarji",
+          urls: "turn:turn.jarji-abuashvili.link:3478",
+          username: "ubuntu",
           credential: "abuashvili@1",
         },
       ],
