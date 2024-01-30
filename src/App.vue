@@ -43,8 +43,8 @@ let pc = null;
     pc = new RTCPeerConnection(servers);
 
     localStream.value = await navigator.mediaDevices.getUserMedia({
-      video: true,
-      audio: true,
+      video: { echoCancellation: true },
+      audio: { echoCancellation: true },
     });
 
     const audio = localStream.value.getAudioTracks()[0];
