@@ -44,7 +44,9 @@ let pc = null;
 
     localStream.value = await navigator.mediaDevices.getUserMedia({
       video: true,
-      audio: { echoCancellation: true },
+      audio: {
+        sampleSize: 16,
+      },
     });
 
     const audio = localStream.value.getAudioTracks()[0];
