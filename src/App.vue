@@ -23,7 +23,7 @@ const servers = {
     {
       urls: "turn:turn.jarji-abuashvili.link:3478",
       username: "ubuntu",
-      credential: "abuashvili@1",
+      credential: "jarji",
     },
   ],
   iceCandidatePoolSize: 10,
