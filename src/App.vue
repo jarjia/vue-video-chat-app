@@ -31,11 +31,11 @@ let pc = null;
             "stun:stun2.l.google.com:19302",
           ],
         },
-        // {
-        //   urls: "turn:openrelay.metered.ca:80",
-        //   username: "openrelayproject",
-        //   credential: "openrelayproject",
-        // },
+        {
+          urls: "turn:13.60.9.184:3478",
+          username: "jarji",
+          credential: "abuashvili@1",
+        },
       ],
       iceCandidatePoolSize: 10,
     };
@@ -183,6 +183,7 @@ watch(channel, () => {
       "
       autoplay
       playsinline="true"
+      oncontextmenu="return false;"
       muted
     ></video>
     <video
@@ -192,6 +193,7 @@ watch(channel, () => {
           remoteVideos = ref;
         }
       "
+      oncontextmenu="return false;"
       autoplay
       playsinline="true"
     ></video>
