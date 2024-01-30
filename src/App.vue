@@ -31,11 +31,11 @@ let pc = null;
             "stun:stun2.l.google.com:19302",
           ],
         },
-        {
-          urls: "turn:openrelay.metered.ca:80",
-          username: "openrelayproject",
-          credential: "openrelayproject",
-        },
+        // {
+        //   urls: "turn:openrelay.metered.ca:80",
+        //   username: "openrelayproject",
+        //   credential: "openrelayproject",
+        // },
       ],
       iceCandidatePoolSize: 10,
     };
@@ -49,8 +49,6 @@ let pc = null;
 
     const audio = localStream.value.getAudioTracks()[0];
 
-    audio.enabled = false;
-
     remoteStream.value = new MediaStream();
 
     localStream.value.getTracks().forEach((track) => {
@@ -62,6 +60,8 @@ let pc = null;
         remoteStream.value.addTrack(track);
       });
     };
+
+    // audio.enabled = false;
 
     myVideo.value.srcObject = localStream.value;
     remoteVideos.value.srcObject = remoteStream.value;
@@ -183,6 +183,7 @@ watch(channel, () => {
       "
       autoplay
       playsinline="true"
+      muted
     ></video>
     <video
       class="w-[30vw] min-h-[300px] m-2 bg-black"
