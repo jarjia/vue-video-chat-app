@@ -15,60 +15,47 @@ import axios from "axios";
 useInstantiatePusher();
 let pc = null;
 
-(async () => {
-  try {
-    const { data } = await axios.get(
-      `${import.meta.env.VITE_TURN_SERVER_URL}?apiKey=${
-        import.meta.env.VITE_TURN_SERVER_KEY
-      }`
-    );
+const servers = {
+  iceServers: [
+    {
+      urls: ["stun:stun1.l.google.com:19302", "stun:stun2.l.google.com:19302"],
+    },
+    {
+      urls: "turn:turn.jarji-abuashvili.link:3478",
+      username: "ubuntu",
+      credential: "abuashvili@1",
+    },
+  ],
+  iceCandidatePoolSize: 10,
+};
 
-    const servers = {
-      iceServers: [
-        {
-          urls: [
-            "stun:stun1.l.google.com:19302",
-            "stun:stun2.l.google.com:19302",
-          ],
-        },
-        {
-          urls: "turn:turn.jarji-abuashvili.link:3478",
-          username: "ubuntu",
-          credential: "abuashvili@1",
-        },
-      ],
-      iceCandidatePoolSize: 10,
-    };
+pc = new RTCPeerConnection(servers);
 
-    pc = new RTCPeerConnection(servers);
+onMounted(async () => {
+  localStream.value = await navigator.mediaDevices.getUserMedia({
+    video: true,
+    audio: true,
+  });
 
-    localStream.value = await navigator.mediaDevices.getUserMedia({
-      video: true,
-      audio: true,
+  const audio = localStream.value.getAudioTracks()[0];
+
+  remoteStream.value = new MediaStream();
+
+  localStream.value.getTracks().forEach((track) => {
+    pc.addTrack(track, localStream.value);
+  });
+
+  pc.ontrack = (event) => {
+    event.streams[0].getTracks().forEach((track) => {
+      remoteStream.value.addTrack(track);
     });
+  };
 
-    const audio = localStream.value.getAudioTracks()[0];
+  // audio.enabled = false;
 
-    remoteStream.value = new MediaStream();
-
-    localStream.value.getTracks().forEach((track) => {
-      pc.addTrack(track, localStream.value);
-    });
-
-    pc.ontrack = (event) => {
-      event.streams[0].getTracks().forEach((track) => {
-        remoteStream.value.addTrack(track);
-      });
-    };
-
-    // audio.enabled = false;
-
-    myVideo.value.srcObject = localStream.value;
-    remoteVideos.value.srcObject = remoteStream.value;
-  } catch (error) {
-    console.log(error);
-  }
-})();
+  myVideo.value.srcObject = localStream.value;
+  remoteVideos.value.srcObject = remoteStream.value;
+});
 
 const channel = ref(null);
 const localStream = ref(null);
