@@ -135,8 +135,8 @@ const answerCandidates = ref(null);
 const offerCandidates = ref(null);
 const answer = ref(null);
 
-watch(pusher, () => {
-  if(pusher.value) {
+watch(channel, () => {
+  if(channel.value) {
   channel.value.listen("VideoChatEvent", (data) => {
     const { message } = data;
     console.log(message)
