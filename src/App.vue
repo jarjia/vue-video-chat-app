@@ -121,6 +121,13 @@ const answerCall = async () => {
   await postCreateAnswer(callId, answer);
 };
 
+if (window.Echo) {
+    console.log("Echo connected successfully.");
+}
+if (window.Pusher) {
+    console.log("Pusher loaded successfully.");
+}
+
 onMounted(() => {
   window.Pusher.logToConsole = true
   channel.value = window.Echo.channel("video-chat");
