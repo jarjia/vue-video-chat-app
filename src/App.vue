@@ -11,6 +11,7 @@ import {
 import useInstantiatePusher from "./helpers/useInstantiatePusher";
 import useServers from "./helpers/useServers";
 import axios from "axios";
+import Pusher from "pusher-js";
 // comment
 useInstantiatePusher();
 let pc = null;
@@ -120,13 +121,15 @@ const answerCall = async () => {
   await postCreateAnswer(callId, answer);
 };
 
+let pusher = new Pusher(import.meta.env.VITE_PUSHER_KEY, {
+  cluster: 'eu'
+});
+
 onMounted(() => {
-  console.log(window, window.Echo, pc)
-  console.log("mounted")
   window.Pusher.logToConsole = true
-  if (window.Pusher) {
+  if (pusher) {
     console.log("echo")
-    channel.value = window.Pusher.subscribe("video-chat");
+    channel.value = pusher.subscribe("video-chat");
     // channel.value.listen('VideoChatEvent', (data) => {
     //   console.log("Received VideoChatEvent:", data);
     // });
