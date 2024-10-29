@@ -133,7 +133,9 @@ const offerCandidates = ref(null);
 const answer = ref(null);
 console.log("app")
 watch(channel, () => {
-  console.log("before channel", channel.value)
+  console.log("before channel if<")
+  if(channel.value) {
+    console.log("before channel if>")
   channel.value.listen("VideoChatEvent", (data) => {
     const { message } = data;
     console.log(message)
@@ -160,6 +162,7 @@ watch(channel, () => {
       pc.setRemoteDescription(answerDescription);
     }
   });
+  }
 });
 </script>
 
