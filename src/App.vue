@@ -123,12 +123,10 @@ const answerCall = async () => {
 
 onMounted(() => {
   window.Pusher.logToConsole = true
-  if (pusher) {
-    channel.value = window.Echo.channel("video-chat");
-    channel.value.listen('VideoChatEvent', (data) => {
-      console.log("Received VideoChatEvent:", data);
-    });
-  }
+  channel.value = window.Echo.channel("video-chat");
+  channel.value.listen('VideoChatEvent', (data) => {
+    console.log("Received VideoChatEvent:", data);
+  });
 });
 
 const answerCandidates = ref(null);
