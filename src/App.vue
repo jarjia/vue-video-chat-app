@@ -124,7 +124,7 @@ const answerCall = async () => {
 onMounted(() => {
   window.Pusher.logToConsole = true
   channel.value = window.Echo.channel("video-chat");
-  channel.value.listen('VideoChatEvent', (data) => {
+  channel.value.listen('video-chat', (data) => {
     console.log("Received VideoChatEvent:", data);
   });
 });
