@@ -123,6 +123,7 @@ const answerCall = async () => {
 onMounted(() => {
   console.log(window, window.Echo, pc)
   console.log("mounted")
+  window.Pusher.logToConsole = true
   if (window.Echo) {
     console.log("echo")
     channel.value = window.Echo.channel("video-chat");
