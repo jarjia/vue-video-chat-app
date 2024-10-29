@@ -132,6 +132,7 @@ const answerCandidates = ref(null);
 const offerCandidates = ref(null);
 const answer = ref(null);
 console.log("app")
+  console.log(localStream.value)
 watch(channel, () => {
   console.log("before channel if<")
   if(channel.value) {
