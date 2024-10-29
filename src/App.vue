@@ -121,6 +121,7 @@ const answerCall = async () => {
 };
 
 onMounted(() => {
+  console.log(window, window.Echo)
   console.log("mounted")
   if (window.Echo) {
     console.log("echo")
