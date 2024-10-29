@@ -144,7 +144,7 @@ watch(channel, () => {
   console.log("before channel if<")
   if(channel.value) {
   console.log("before channel if>")
-  channel.value.listen("App\\Events\\VideoChatEvent", (data) => {
+  channel.value.listen("VideoChatEvent", (data) => {
     const { message } = data;
     console.log(message)
     if (message?.answerCandidates) {
