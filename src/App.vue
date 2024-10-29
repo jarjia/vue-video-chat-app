@@ -133,6 +133,7 @@ const answer = ref(null);
 watch(channel, () => {
   channel.value.listen("VideoChatEvent", (data) => {
     const { message } = data;
+    console.log(message)
     if (message?.answerCandidates) {
       message.answerCandidates.forEach((item) => {
         const candidate = new RTCIceCandidate(item);
