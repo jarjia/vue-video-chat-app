@@ -127,6 +127,9 @@ onMounted(() => {
   if (window.Echo) {
     console.log("echo")
     channel.value = window.Echo.channel("video-chat");
+    channel.value.listen('VideoChatEvent', (data) => {
+      console.log("Received VideoChatEvent:", data);
+    });
   }
 });
 
