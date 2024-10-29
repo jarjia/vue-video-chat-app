@@ -129,8 +129,9 @@ onMounted(() => {
 const answerCandidates = ref(null);
 const offerCandidates = ref(null);
 const answer = ref(null);
-
+console.log("app")
 watch(channel, () => {
+  console.log("before channel")
   channel.value.listen("VideoChatEvent", (data) => {
     const { message } = data;
     console.log(message)
