@@ -10,7 +10,7 @@ declare global {
 
 function useInstantiatePusher() {
   window.Pusher = Pusher;
-
+  Window.Pusher.logToConsole = true
   window.Echo = new Echo({
     authEndpoint: `${import.meta.env.VITE_API_URL}broadcasting/auth`,
     broadcaster: "pusher",
