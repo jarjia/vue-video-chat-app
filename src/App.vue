@@ -21,7 +21,7 @@ const servers = {
       urls: ["stun:stun1.l.google.com:19302", "stun:stun2.l.google.com:19302"],
     },
     {
-      urls: "turn:turn.jarji-abuashvili.link:3478",
+      urls: "turn:turn.jarji-abuashvili.com:3478",
       username: "ubuntu",
       credential: "jarji",
     },
