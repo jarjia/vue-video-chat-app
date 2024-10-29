@@ -133,7 +133,7 @@ const offerCandidates = ref(null);
 const answer = ref(null);
 console.log("app")
 watch(channel, () => {
-  console.log("before channel")
+  console.log("before channel", channel.value)
   channel.value.listen("VideoChatEvent", (data) => {
     const { message } = data;
     console.log(message)
