@@ -130,8 +130,8 @@ if (window.Pusher) {
 
 onMounted(() => {
   window.Pusher.logToConsole = true
-  channel.value = window.Echo.channel("video-chat");
-  channel.value.listen('video-chat', (data) => {
+  channel.value = window.Echo.channel("video.chat");
+  channel.value.listen('video.chat', (data) => {
     console.log("Received VideoChatEvent:", data);
   });
 });
