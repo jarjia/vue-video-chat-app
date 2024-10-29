@@ -121,22 +121,12 @@ const answerCall = async () => {
   await postCreateAnswer(callId, answer);
 };
 
-const pusher = ref(null)
-
-pusher.value = new Pusher(import.meta.env.VITE_PUSHER_KEY, {
-  cluster: 'eu'
-});
-
 onMounted(() => {
   window.Pusher.logToConsole = true
   if (pusher) {
-    console.log("echo")
-    channel.value = pusher.subscribe("video-chat");
-    // channel.value.listen('VideoChatEvent', (data) => {
-    //   console.log("Received VideoChatEvent:", data);
-    // });
-    channel.value.bind('video-chat', function(members) {
-      alert('successfully subscribed!', members);
+    channel.value = window.Echo.channel("video-chat");
+    channel.value.listen('VideoChatEvent', (data) => {
+      console.log("Received VideoChatEvent:", data);
     });
   }
 });
@@ -145,13 +135,8 @@ const answerCandidates = ref(null);
 const offerCandidates = ref(null);
 const answer = ref(null);
 
-console.log("app")
-console.log(localStream.value)
-  
 watch(pusher, () => {
-  console.log("before channel if<")
   if(pusher.value) {
-  console.log("before channel if>")
   channel.value.listen("VideoChatEvent", (data) => {
     const { message } = data;
     console.log(message)
