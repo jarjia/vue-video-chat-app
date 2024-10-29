@@ -31,6 +31,13 @@ const servers = {
 
 pc = new RTCPeerConnection(servers);
 
+const channel = ref(null);
+const localStream = ref(null);
+const remoteStream = ref(null);
+const myVideo = ref(null);
+const remoteVideos = ref(null);
+const callInput = ref("");
+  
 onMounted(async () => {
   localStream.value = await navigator.mediaDevices.getUserMedia({
     video: true,
@@ -56,13 +63,6 @@ onMounted(async () => {
   myVideo.value.srcObject = localStream.value;
   remoteVideos.value.srcObject = remoteStream.value;
 });
-
-const channel = ref(null);
-const localStream = ref(null);
-const remoteStream = ref(null);
-const myVideo = ref(null);
-const remoteVideos = ref(null);
-const callInput = ref("");
 
 // const startWebCam = async () => {};
 
@@ -131,12 +131,14 @@ onMounted(() => {
 const answerCandidates = ref(null);
 const offerCandidates = ref(null);
 const answer = ref(null);
+
 console.log("app")
-  console.log(localStream.value)
+console.log(localStream.value)
+  
 watch(channel, () => {
   console.log("before channel if<")
   if(channel.value) {
-    console.log("before channel if>")
+  console.log("before channel if>")
   channel.value.listen("VideoChatEvent", (data) => {
     const { message } = data;
     console.log(message)
