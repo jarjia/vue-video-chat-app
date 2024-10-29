@@ -130,6 +130,9 @@ onMounted(() => {
     channel.value.listen('VideoChatEvent', (data) => {
       console.log("Received VideoChatEvent:", data);
     });
+    channel.bind('pusher:subscription_succeeded', function(members) {
+      alert('successfully subscribed!');
+    });
   }
 });
 
