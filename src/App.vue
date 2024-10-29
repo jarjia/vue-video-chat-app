@@ -121,7 +121,9 @@ const answerCall = async () => {
 };
 
 onMounted(() => {
+  console.log("mounted")
   if (window.Echo) {
+    console.log("echo")
     channel.value = window.Echo.channel("video-chat");
   }
 });
