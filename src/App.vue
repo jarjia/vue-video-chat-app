@@ -124,14 +124,14 @@ onMounted(() => {
   console.log(window, window.Echo, pc)
   console.log("mounted")
   window.Pusher.logToConsole = true
-  if (window.Echo) {
+  if (window.Pusher) {
     console.log("echo")
-    channel.value = window.Echo.channel("video-chat");
-    channel.value.listen('VideoChatEvent', (data) => {
-      console.log("Received VideoChatEvent:", data);
-    });
-    channel.value.bind('pusher:subscription_succeeded', function(members) {
-      alert('successfully subscribed!');
+    channel.value = window.Pusher.subscribe("video-chat");
+    // channel.value.listen('VideoChatEvent', (data) => {
+    //   console.log("Received VideoChatEvent:", data);
+    // });
+    channel.value.bind('video-chat', function(members) {
+      alert('successfully subscribed!', members);
     });
   }
 });
