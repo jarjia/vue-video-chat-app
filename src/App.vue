@@ -22,8 +22,8 @@ const servers = {
     },
     {
       urls: "turn:turn.jarji-abuashvili.com:3478",
-      username: "ubuntu",
-      credential: "jarji",
+      username: "jarji",
+      credential: "abuashvili",
     },
   ],
   iceCandidatePoolSize: 10,
