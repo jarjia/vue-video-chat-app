@@ -38,7 +38,7 @@ const remoteStream = ref(null);
 const myVideo = ref(null);
 const remoteVideos = ref(null);
 const callInput = ref("");
-  
+
 onMounted(async () => {
   localStream.value = await navigator.mediaDevices.getUserMedia({
     video: true,
@@ -122,17 +122,23 @@ const answerCall = async () => {
 };
 
 if (window.Echo) {
-    console.log("Echo connected successfully.");
+  console.log("Echo connected successfully.");
 }
 if (window.Pusher) {
-    console.log("Pusher loaded successfully.");
+  console.log("Pusher loaded successfully.");
 }
 
 onMounted(() => {
-  window.Pusher.logToConsole = true
-  channel.value = window.Echo.channel("video.chat");
-  channel.value.listen('video.chat', (data) => {
+  window.Pusher.logToConsole = true;
+
+  channel.value = window.Echo.channel("video-chat");
+
+  channel.value.listen("VideoChatEvent", (data) => {
     console.log("Received VideoChatEvent:", data);
+  });
+
+  channel.value.listen(".pusher:subscription_succeeded", () => {
+    console.log("Successfully subscribed to the video-chat channel");
   });
 });
 
@@ -141,33 +147,33 @@ const offerCandidates = ref(null);
 const answer = ref(null);
 
 watch(channel, () => {
-  if(channel.value) {
-  channel.value.listen("VideoChatEvent", (data) => {
-    const { message } = data;
-    console.log(message)
-    if (message?.answerCandidates) {
-      message.answerCandidates.forEach((item) => {
-        const candidate = new RTCIceCandidate(item);
-        pc.addIceCandidate(candidate);
-      });
-      answerCandidates.value = message.answerCandidates;
-    }
-    if (message?.offerCandidates) {
-      message.offerCandidates.forEach((item) => {
-        pc.addIceCandidate(new RTCIceCandidate(item));
-      });
-      offerCandidates.value = message.offerCandidates;
-    }
-    if (!pc.currentRemoteDescription && message?.answer) {
-      let ans = {
-        ...message.answer,
-        sdp: message.answer.sdp + "\n",
-      };
-      answer.value = message?.answer;
-      const answerDescription = new RTCSessionDescription(ans);
-      pc.setRemoteDescription(answerDescription);
-    }
-  });
+  if (channel.value) {
+    channel.value.listen("VideoChatEvent", (data) => {
+      const { message } = data;
+      console.log(message);
+      if (message?.answerCandidates) {
+        message.answerCandidates.forEach((item) => {
+          const candidate = new RTCIceCandidate(item);
+          pc.addIceCandidate(candidate);
+        });
+        answerCandidates.value = message.answerCandidates;
+      }
+      if (message?.offerCandidates) {
+        message.offerCandidates.forEach((item) => {
+          pc.addIceCandidate(new RTCIceCandidate(item));
+        });
+        offerCandidates.value = message.offerCandidates;
+      }
+      if (!pc.currentRemoteDescription && message?.answer) {
+        let ans = {
+          ...message.answer,
+          sdp: message.answer.sdp + "\n",
+        };
+        answer.value = message?.answer;
+        const answerDescription = new RTCSessionDescription(ans);
+        pc.setRemoteDescription(answerDescription);
+      }
+    });
   }
 });
 </script>
