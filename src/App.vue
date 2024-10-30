@@ -140,6 +140,10 @@ onMounted(() => {
   channel.value.listen(".pusher:subscription_succeeded", () => {
     console.log("Successfully subscribed to the video-chat channel");
   });
+
+  channel.value.listen("pusher_internal:subscription_succeeded", () => {
+    console.log("Successfully subscribed to the video-chat channel");
+  });
 });
 
 const answerCandidates = ref(null);
