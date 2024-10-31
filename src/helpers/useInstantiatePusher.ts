@@ -17,6 +17,7 @@ function useInstantiatePusher() {
     key: import.meta.env.VITE_PUSHER_KEY,
     forceTLS: true,
     cluster: ["eu"],
+    withCredentials: true
   });
 
   return true;
