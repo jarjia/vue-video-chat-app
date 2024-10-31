@@ -12,12 +12,11 @@ function useInstantiatePusher() {
   window.Pusher = Pusher;
 
   window.Echo = new Echo({
-    authEndpoint: `${import.meta.env.VITE_API_URL}broadcasting/auth`,
+    authEndpoint: `${import.meta.env.VITE_API_URL}/broadcasting/auth`,
     broadcaster: "pusher",
     key: import.meta.env.VITE_PUSHER_KEY,
     forceTLS: true,
     cluster: ["eu"],
-    withCredentials: true
   });
 
   return true;
