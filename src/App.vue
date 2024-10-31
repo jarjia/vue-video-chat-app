@@ -12,8 +12,9 @@ import useInstantiatePusher from "./helpers/useInstantiatePusher";
 import useServers from "./helpers/useServers";
 import axios from "axios";
 import Pusher from "pusher-js";
-// comment
+
 useInstantiatePusher();
+
 let pc = null;
 
 const servers = {
@@ -183,6 +184,12 @@ watch(channel, () => {
 </script>
 
 <template>
+  <p class="my-4">
+    Create a chat and send the code to a person you want to chat with or have
+    the other person send you the code(which needs to be inputed in the code
+    field) and click green answer button to accept the call. Below messages are
+    purely for testing purposes.
+  </p>
   <div class="flex justify-center gap-4 items-center">
     <video
       class="w-[30vw] min-h-[300px] m-2 bg-black"
@@ -213,18 +220,18 @@ watch(channel, () => {
     @click="createOffer"
     class="bg-blue-400 text-white p-4 m-2"
   >
-    ჩათის შექმნა
+    Create chat
   </button>
   <br />
 
-  კოდი: <input class="border-2 border-black" v-model="callInput" />
+  code: <input class="border-2 border-black" v-model="callInput" />
   <br />
   <button
     id="answerButton"
     @click="answerCall"
     class="p-4 text-white mt-2 active:bg-green-700 bg-green-500"
   >
-    პასუხი
+    Answer
   </button>
   <p class="bg-black p-1 text-green-500" v-if="offerCandidates !== null">
     offer candidates არის
